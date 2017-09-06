@@ -35,11 +35,17 @@ namespace FileMonitor
                 fileFilter = args[1];
                 _commandPattern = args[2];
             }
+            Console.WriteLine(string.Join("\t",args));
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
 
             var fileWatcher = new FileSystemWatcher
             {
                 Path = path,
-                NotifyFilter = NotifyFilters.LastWrite,
+                NotifyFilter = NotifyFilters.LastWrite|NotifyFilters.FileName,
                 Filter = fileFilter
             };
             fileWatcher.Changed +=FileWatcherOnChanged;
@@ -97,7 +103,10 @@ namespace FileMonitor
             }
             finally
             {
-                watcher.EnableRaisingEvents = true;
+                if (watcher != null)
+                {
+                    watcher.EnableRaisingEvents = true;
+                }
             }
         }
     }
